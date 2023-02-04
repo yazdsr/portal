@@ -3,14 +3,16 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Divider, Drawer, Typography, useMediaQuery } from '@mui/material';
-import { ChartBar as ChartBarIcon } from '../icons/chart-bar';
+import { Users as UsersIcon } from '../icons/users';
+import { Servers as ServersIcon } from '../icons/server';
 import { NavItem } from './nav-item';
+import Router from 'next/router';
 
 const items = [
   {
     href: '/',
-    icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
+    icon: (<UsersIcon fontSize="small" />),
+    title: 'Users'
   },
 ];
 
@@ -19,6 +21,12 @@ const shapeCircleStyles = { borderRadius: '50%' };
 
 
 export const DashboardSidebar = (props) => {
+  useEffect(() => {
+    let token = window.localStorage.getItem("token")
+    if (!token) {
+      Router.push("/login").catch(console.error)
+    }
+  })
   const { open, onClose } = props;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {

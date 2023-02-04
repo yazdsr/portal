@@ -13,14 +13,25 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material';
-import { getInitials } from '../../utils/get-initials';
+import axios from 'axios';
+import { masterUrl } from '../../constants/urls';
+import SnkBr from '../snackbar';
+import Link from 'next/link';
+import { DeleteForeverOutlined } from '@material-ui/icons';
+import dayjs from 'dayjs';
+
 
 export const CustomerListResults = ({ customers, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+
+  const [snkOpen, setSnkOpen] = useState(false)
+  const [snkSev, setSnkSev] = useState("info")
+  const [snkMsg, setSnkMsg] = useState("")
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -62,13 +73,71 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     setPage(newPage);
   };
 
+  const disable = (id) => {
+    let token = window.localStorage.getItem("token")
+    axios.patch(`http://${masterUrl}/v1/users/${id}/disable`, {
+      id
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => {
+      setSnkSev("success")
+      setSnkOpen(true)
+      setSnkMsg(res?.data?.message)
+    }).catch(err => {
+      setSnkSev("error")
+      setSnkOpen(true)
+      setSnkMsg(err?.response?.data?.message)
+    })
+  }
+  const activate = (id) => {
+    let token = window.localStorage.getItem("token")
+    axios.patch(`http://${masterUrl}/v1/users/${id}/activate`, {
+      id
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => {
+      setSnkSev("success")
+      setSnkOpen(true)
+      setSnkMsg(res?.data?.message)
+    }).catch(err => {
+      setSnkSev("error")
+      setSnkOpen(true)
+      setSnkMsg(err?.response?.data?.message)
+    })
+  }
+
+  const delUser = (id) => {
+    let token = window.localStorage.getItem("token")
+    axios.delete(`http://${masterUrl}/v1/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => {
+      setSnkSev("success")
+      setSnkOpen(true)
+      setSnkMsg(res?.data?.message)
+    }).catch(err => {
+      setSnkSev("error")
+      setSnkOpen(true)
+      setSnkMsg(err?.response?.data?.message)
+    })
+  }
   return (
     <Card {...rest}>
+      {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} /> : <></>}
+
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1050 }}>
+        <Box>
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>
+                  ID
+                </TableCell>
                 <TableCell>
                   Full Name
                 </TableCell>
@@ -79,13 +148,18 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                   Server ID
                 </TableCell>
                 <TableCell>
-                  Valid Until
+                  Due Date
                 </TableCell>
                 <TableCell>
                   Status
                 </TableCell>
-                <TableCell padding='checkbox'>
+                <TableCell>
+
                 </TableCell>
+                <TableCell>
+
+                </TableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
@@ -106,32 +180,55 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {customer.id}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                    <Box
+                      sx={{
+                        alignItems: 'center',
+                        display: 'flex'
+                      }}
+                    >
+                      <Typography
+                        color="textPrimary"
+                        variant="body1"
+                      >
+                        {customer.full_name}
+                      </Typography>
+                    </Box>
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {customer.username}
                   </TableCell>
                   <TableCell>
-                  {format(customer.createdAt, 'dd/MM/yyyy')}
-
+                    {customer.server_id}
                   </TableCell>
                   <TableCell>
-                    <Typography color="green" fontWeight="bold">
-                      Active
-                    </Typography>
+                    {dayjs(customer.valid_until).format("MM/DD/YYYY")}
                   </TableCell>
                   <TableCell>
                     <Button
-                      color="warning"
-                      variant="outlined"
+                      color={customer.active ? "success" : "error"}
+                      variant="contained"
+                      onClick={customer.active ? () => disable(customer.id) : () => activate(customer.id)}
                     >
-                      Edit
+                      {customer.active ? "Active" : "Disable"}
                     </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Link href={`/edituser/${customer.id}`}>
+                      <Button color='warning'>Edit</Button>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="error"
+                      onClick={() => confirm(`Are you sure that you want to delete user with id ${customer.id}?`) ? delUser(customer.id) : null}
+                    >
+                      <DeleteForeverOutlined/>
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

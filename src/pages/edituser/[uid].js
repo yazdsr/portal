@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Container, Typography } from '@mui/material';
-import { DashboardLayout } from '../components/dashboard-layout';
-import { useState } from 'react';
+import { DashboardLayout } from '../../components/dashboard-layout';
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -17,10 +17,9 @@ import {
   TextField
 } from '@mui/material';
 import axios from 'axios';
-import { masterUrl } from '../constants/urls';
-import Router from 'next/router';
-import SnkBr from '../components/snackbar';
-
+import { masterUrl } from '../../constants/urls';
+import Router, { useRouter } from 'next/router';
+import SnkBr from '../../components/snackbar';
 const servers = [
   {
     value: 1,
@@ -41,8 +40,16 @@ const servers = [
 ];
 
 
-const AddUser = () => {
+const EditUser = () => {
+  const router = useRouter()
+  const { uid } = router.query
   const [values, setValues] = useState({
+    full_name: '',
+    username: '',
+    password: '',
+    server_id: 1,
+  });
+  const [initValues, setInitValues] = useState({
     full_name: '',
     username: '',
     password: '',
@@ -59,15 +66,47 @@ const AddUser = () => {
     });
   };
 
+  const [value, setValue] = useState(dayjs());
+
+  const handleDateChange = (newValue) => {
+    setValue(newValue);
+  };
+  useEffect(() => {
+    if (!initValues.full_name) {
+      let token = window.localStorage.getItem("token")
+
+      axios.get(`http://${masterUrl}/v1/users/${uid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        console.log(res)
+        setValues({
+          full_name: res.data.full_name,
+          username: res.data.username,
+          server_id: res.data.server_id
+        })
+        setInitValues({
+          full_name: res.data.full_name,
+          username: res.data.username,
+          server_id: res.data.server_id
+        })
+        setValue(dayjs(res.data.valid_until))
+      }).catch(err => {
+        setSnkSev("error")
+        setSnkOpen(true)
+        setSnkMsg(err?.response?.data?.message)
+      })
+    }
+  })
+
   const handleSubmit = (e) => {
     e.preventDefault()
     let token = window.localStorage.getItem("token")
     setSubmitting(true)
-    axios.post(`http://${masterUrl}/v1/users`, {
+    axios.put(`http://${masterUrl}/v1/users/${uid}`, {
       full_name: values.full_name,
-      username: values.username,
       password: values.username,
-      server_id: parseInt(values.server_id),
       valid_until: value.toISOString()
     }, {
       headers: {
@@ -86,18 +125,12 @@ const AddUser = () => {
     }).catch(err => {
       setSnkSev("error")
       setSnkOpen(true)
-      setSnkMsg(err?.response?.data?.message || err?.response?.data)
+      setSnkMsg(err?.response?.data?.message)
       console.log(err)
       setSubmitting(false)
 
     })
   }
-
-  const [value, setValue] = useState(dayjs());
-
-  const handleDateChange = (newValue) => {
-    setValue(newValue);
-  };
   return <>
     <Head>
       <title>
@@ -168,9 +201,9 @@ const AddUser = () => {
                         name="username"
                         helperText="-- user can login with this username"
                         onChange={handleChange}
-                        required
                         value={values.username}
                         variant="outlined"
+                        disabled={true}
                       />
                     </Grid>
                     <Grid
@@ -184,7 +217,6 @@ const AddUser = () => {
                         helperText="-- user can login with this password"
                         name="password"
                         onChange={handleChange}
-                        required
                         type="password"
                         value={values.password}
                         variant="outlined"
@@ -196,6 +228,7 @@ const AddUser = () => {
                       xs={12}
                     >
                       <TextField
+                        disabled={true}
                         fullWidth
                         label="Select Server"
                         name="server_id"
@@ -248,7 +281,7 @@ const AddUser = () => {
                     type='submit'
                     disabled={submitting}
                   >
-                    Save details
+                    Save
                   </Button>
                 </Box>
               </Card>
@@ -260,10 +293,10 @@ const AddUser = () => {
   </>
 };
 
-AddUser.getLayout = (page) => (
+EditUser.getLayout = (page) => (
   <DashboardLayout>
     {page}
   </DashboardLayout>
 );
 
-export default AddUser;
+export default EditUser;
