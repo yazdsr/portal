@@ -134,7 +134,7 @@ const EditUser = () => {
   return <>
     <Head>
       <title>
-        Yazd SR Portal | Add User
+        Yazd SR Portal | Edit User
       </title>
     </Head>
     {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} /> : <></>}
