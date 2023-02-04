@@ -6,6 +6,7 @@ import { CustomerListToolbar } from '../components/customer/customer-list-toolba
 import { DashboardLayout } from '../components/dashboard-layout';
 import axios from 'axios'
 import { masterUrl } from '../constants/urls';
+import SnkBr from '../components/snackbar';
 
 const Page = () => {
   const [users, setUsers] = useState([])
