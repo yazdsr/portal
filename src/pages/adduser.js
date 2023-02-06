@@ -104,7 +104,7 @@ const AddUser = () => {
         Yazd SR Portal | Add User
       </title>
     </Head>
-    {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} /> : <></>}
+    <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} setOpen={setSnkOpen}/>
 
     <Box
       component="main"

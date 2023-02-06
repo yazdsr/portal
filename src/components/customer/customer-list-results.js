@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -24,7 +24,7 @@ import { DeleteForeverOutlined } from '@material-ui/icons';
 import dayjs from 'dayjs';
 
 
-export const CustomerListResults = ({ customers, ...rest }) => {
+export const CustomerListResults = () => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -32,6 +32,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   const [snkOpen, setSnkOpen] = useState(false)
   const [snkSev, setSnkSev] = useState("info")
   const [snkMsg, setSnkMsg] = useState("")
+  const [customers, setCustomers] = useState([])
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -44,6 +45,26 @@ export const CustomerListResults = ({ customers, ...rest }) => {
 
     setSelectedCustomerIds(newSelectedCustomerIds);
   };
+
+  const fetchCustomers = () => {
+    let token = window.localStorage.getItem("token")
+    axios.get(`http://${masterUrl}/v1/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        setCustomers(res.data)
+      }).catch(err => {
+        setSnkSev("error")
+        setSnkOpen(true)
+        setSnkMsg("error while fetching users data")
+      })
+  }
+
+  useEffect(() => {
+    fetchCustomers()
+  }, [])
 
   const handleSelectOne = (event, id) => {
     const selectedIndex = selectedCustomerIds.indexOf(id);
@@ -82,6 +103,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
         Authorization: `Bearer ${token}`
       }
     }).then(res => {
+      fetchCustomers()
       setSnkSev("success")
       setSnkOpen(true)
       setSnkMsg(res?.data?.message)
@@ -100,6 +122,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
         Authorization: `Bearer ${token}`
       }
     }).then(res => {
+      fetchCustomers()
       setSnkSev("success")
       setSnkOpen(true)
       setSnkMsg(res?.data?.message)
@@ -117,6 +140,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
         Authorization: `Bearer ${token}`
       }
     }).then(res => {
+      fetchCustomers()
       setSnkSev("success")
       setSnkOpen(true)
       setSnkMsg(res?.data?.message)
@@ -127,8 +151,8 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     })
   }
   return (
-    <Card {...rest}>
-      {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} /> : <></>}
+    <Card>
+      <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} setOpen={setSnkOpen}/>
 
       <PerfectScrollbar>
         <Box>
@@ -227,7 +251,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                       color="error"
                       onClick={() => confirm(`Are you sure that you want to delete user with id ${customer.id}?`) ? delUser(customer.id) : null}
                     >
-                      <DeleteForeverOutlined/>
+                      <DeleteForeverOutlined />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -249,6 +273,6 @@ export const CustomerListResults = ({ customers, ...rest }) => {
   );
 };
 
-CustomerListResults.propTypes = {
-  customers: PropTypes.array.isRequired
-};
+// CustomerListResults.propTypes = {
+//   customers: PropTypes.array.isRequired
+// };

@@ -49,12 +49,6 @@ const EditUser = () => {
     password: '',
     server_id: 1,
   });
-  const [initValues, setInitValues] = useState({
-    full_name: '',
-    username: '',
-    password: '',
-    server_id: 1,
-  });
   const [snkOpen, setSnkOpen] = useState(false)
   const [snkSev, setSnkSev] = useState("info")
   const [snkMsg, setSnkMsg] = useState("")
@@ -72,33 +66,28 @@ const EditUser = () => {
     setValue(newValue);
   };
   useEffect(() => {
-    if (!initValues.full_name) {
-      let token = window.localStorage.getItem("token")
 
-      axios.get(`http://${masterUrl}/v1/users/${uid}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(res => {
-        console.log(res)
-        setValues({
-          full_name: res.data.full_name,
-          username: res.data.username,
-          server_id: res.data.server_id
-        })
-        setInitValues({
-          full_name: res.data.full_name,
-          username: res.data.username,
-          server_id: res.data.server_id
-        })
-        setValue(dayjs(res.data.valid_until))
-      }).catch(err => {
-        setSnkSev("error")
-        setSnkOpen(true)
-        setSnkMsg(err?.response?.data?.message)
+    let token = window.localStorage.getItem("token")
+
+    axios.get(`http://${masterUrl}/v1/users/${uid}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => {
+      console.log(res)
+      setValues({
+        full_name: res.data.full_name,
+        username: res.data.username,
+        server_id: res.data.server_id
       })
-    }
-  })
+      setValue(dayjs(res.data.valid_until))
+    }).catch(err => {
+      setSnkSev("error")
+      setSnkOpen(true)
+      setSnkMsg(err?.response?.data?.message)
+    })
+
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -113,7 +102,6 @@ const EditUser = () => {
         Authorization: `Bearer ${token}`
       }
     }).then(res => {
-      console.log(res)
       setSnkSev("success")
       setSnkOpen(true)
       setSnkMsg(res?.data?.message)
@@ -126,7 +114,6 @@ const EditUser = () => {
       setSnkSev("error")
       setSnkOpen(true)
       setSnkMsg(err?.response?.data?.message)
-      console.log(err)
       setSubmitting(false)
 
     })
@@ -137,7 +124,7 @@ const EditUser = () => {
         Yazd SR Portal | Edit User
       </title>
     </Head>
-    {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} /> : <></>}
+    <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} setOpen={setSnkOpen}/>
 
     <Box
       component="main"

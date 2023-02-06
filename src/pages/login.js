@@ -15,7 +15,7 @@ const Login = () => {
     if (token) {
       Router.push("/").catch(console.error)
     }
-  })
+  }, [])
   const [snkOpen, setSnkOpen] = useState(false)
   const [snkSev, setSnkSev] = useState("info")
   const [snkMsg, setSnkMsg] = useState("")
@@ -63,7 +63,7 @@ const Login = () => {
       <Head>
         <title>Login | Yazd Server Room</title>
       </Head>
-      {snkOpen ? <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg}/> : <></>}
+      <SnkBr open={snkOpen} sev={snkSev} msg={snkMsg} setOpen={setSnkOpen}/>
       <Box
         component="main"
         sx={{
