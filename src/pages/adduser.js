@@ -24,19 +24,19 @@ import SnkBr from '../components/snackbar';
 const servers = [
   {
     value: 1,
-    label: 'Server 1'
+    label: 'Server 1: 192.168.214.2'
   },
   {
     value: 2,
-    label: 'Server 2'
+    label: 'Server 2: 192.168.214.3'
   },
   {
     value: 3,
-    label: 'Server 3'
+    label: 'Server 3: 192.168.214.4'
   },
   {
     value: 4,
-    label: 'Server 4'
+    label: 'Server 4: 192.168.214.5'
   }
 ];
 
@@ -66,7 +66,7 @@ const AddUser = () => {
     axios.post(`http://${masterUrl}/v1/users`, {
       full_name: values.full_name,
       username: values.username,
-      password: values.username,
+      password: values.password,
       server_id: parseInt(values.server_id),
       valid_until: value.toISOString()
     }, {

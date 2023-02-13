@@ -95,7 +95,7 @@ const EditUser = () => {
     setSubmitting(true)
     axios.put(`http://${masterUrl}/v1/users/${uid}`, {
       full_name: values.full_name,
-      password: values.username,
+      password: values.password,
       valid_until: value.toISOString()
     }, {
       headers: {

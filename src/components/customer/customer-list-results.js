@@ -227,7 +227,7 @@ export const CustomerListResults = () => {
                     {customer.username}
                   </TableCell>
                   <TableCell>
-                    {customer.server_id}
+                  192.168.214.{parseInt(customer.server_id)+1}
                   </TableCell>
                   <TableCell>
                     {dayjs(customer.valid_until).format("MM/DD/YYYY")}
