@@ -172,6 +172,9 @@ export const CustomerListResults = () => {
                   Server ID
                 </TableCell>
                 <TableCell>
+                  Start Date
+                </TableCell>
+                <TableCell>
                   Due Date
                 </TableCell>
                 <TableCell>
@@ -228,6 +231,9 @@ export const CustomerListResults = () => {
                   </TableCell>
                   <TableCell>
                   192.168.214.{parseInt(customer.server_id)+1}
+                  </TableCell>
+                  <TableCell>
+                    {dayjs(customer.start_date).format("MM/DD/YYYY")}
                   </TableCell>
                   <TableCell>
                     {dayjs(customer.valid_until).format("MM/DD/YYYY")}

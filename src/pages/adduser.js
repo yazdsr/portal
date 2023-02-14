@@ -68,7 +68,8 @@ const AddUser = () => {
       username: values.username,
       password: values.password,
       server_id: parseInt(values.server_id),
-      valid_until: value.toISOString()
+      valid_until: value.toISOString(),
+      start_date: startValue.toISOString()
     }, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -98,6 +99,12 @@ const AddUser = () => {
   const handleDateChange = (newValue) => {
     setValue(newValue);
   };
+  const [startValue, setStartValue] = useState(dayjs());
+
+  const handleStartDateChange = (newValue) => {
+    setStartValue(newValue);
+  };
+
   return <>
     <Head>
       <title>
@@ -218,7 +225,22 @@ const AddUser = () => {
                     </Grid>
                     <Grid
                       item
-                      md={12}
+                      md={6}
+                      xs={12}
+                    >
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDatePicker
+                          label="Start Date"
+                          inputFormat="MM/DD/YYYY"
+                          value={startValue}
+                          onChange={handleStartDateChange}
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      </LocalizationProvider>
+                    </Grid>
+                    <Grid
+                      item
+                      md={6}
                       xs={12}
                     >
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -231,7 +253,6 @@ const AddUser = () => {
                         />
                       </LocalizationProvider>
                     </Grid>
-
                   </Grid>
                 </CardContent>
                 <Divider />

@@ -65,6 +65,11 @@ const EditUser = () => {
   const handleDateChange = (newValue) => {
     setValue(newValue);
   };
+  const [startValue, setStartValue] = useState(dayjs());
+
+  const handleStartDateChange = (newValue) => {
+    setStartValue(newValue);
+  };
   useEffect(() => {
 
     let token = window.localStorage.getItem("token")
@@ -81,6 +86,7 @@ const EditUser = () => {
         server_id: res.data.server_id
       })
       setValue(dayjs(res.data.valid_until))
+      setStartValue(dayjs(res.data.start_date))
     }).catch(err => {
       setSnkSev("error")
       setSnkOpen(true)
@@ -96,7 +102,8 @@ const EditUser = () => {
     axios.put(`http://${masterUrl}/v1/users/${uid}`, {
       full_name: values.full_name,
       password: values.password,
-      valid_until: value.toISOString()
+      valid_until: value.toISOString(),
+      start_date: startValue.toISOString()
     }, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -238,7 +245,22 @@ const EditUser = () => {
                     </Grid>
                     <Grid
                       item
-                      md={12}
+                      md={6}
+                      xs={12}
+                    >
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDatePicker
+                          label="Start Date"
+                          inputFormat="MM/DD/YYYY"
+                          value={startValue}
+                          onChange={handleStartDateChange}
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      </LocalizationProvider>
+                    </Grid>
+                    <Grid
+                      item
+                      md={6}
                       xs={12}
                     >
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
