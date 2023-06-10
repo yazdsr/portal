@@ -38,7 +38,7 @@ const Login = () => {
     onSubmit: () => {
       setSnkOpen(false)
       console.log(formik.values.username, formik.values.password)
-      axios.post(`http://${masterUrl}/v1/login`, {
+      axios.post(`${masterUrl}/v1/login`, {
         username: formik.values.username,
         password: formik.values.password
       }).then(res => {

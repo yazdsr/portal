@@ -48,7 +48,7 @@ export const CustomerListResults = () => {
 
   const fetchCustomers = () => {
     let token = window.localStorage.getItem("token")
-    axios.get(`http://${masterUrl}/v1/users`, {
+    axios.get(`${masterUrl}/v1/users`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -96,7 +96,7 @@ export const CustomerListResults = () => {
 
   const disable = (id) => {
     let token = window.localStorage.getItem("token")
-    axios.patch(`http://${masterUrl}/v1/users/${id}/disable`, {
+    axios.patch(`${masterUrl}/v1/users/${id}/disable`, {
       id
     }, {
       headers: {
@@ -115,7 +115,7 @@ export const CustomerListResults = () => {
   }
   const activate = (id) => {
     let token = window.localStorage.getItem("token")
-    axios.patch(`http://${masterUrl}/v1/users/${id}/activate`, {
+    axios.patch(`${masterUrl}/v1/users/${id}/activate`, {
       id
     }, {
       headers: {
@@ -135,7 +135,7 @@ export const CustomerListResults = () => {
 
   const delUser = (id) => {
     let token = window.localStorage.getItem("token")
-    axios.delete(`http://${masterUrl}/v1/users/${id}`, {
+    axios.delete(`${masterUrl}/v1/users/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

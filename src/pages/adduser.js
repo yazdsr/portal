@@ -63,7 +63,7 @@ const AddUser = () => {
     e.preventDefault()
     let token = window.localStorage.getItem("token")
     setSubmitting(true)
-    axios.post(`http://${masterUrl}/v1/users`, {
+    axios.post(`${masterUrl}/v1/users`, {
       full_name: values.full_name,
       username: values.username,
       password: values.password,

@@ -74,7 +74,7 @@ const EditUser = () => {
 
     let token = window.localStorage.getItem("token")
 
-    axios.get(`http://${masterUrl}/v1/users/${uid}`, {
+    axios.get(`${masterUrl}/v1/users/${uid}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -99,7 +99,7 @@ const EditUser = () => {
     e.preventDefault()
     let token = window.localStorage.getItem("token")
     setSubmitting(true)
-    axios.put(`http://${masterUrl}/v1/users/${uid}`, {
+    axios.put(`${masterUrl}/v1/users/${uid}`, {
       full_name: values.full_name,
       password: values.password,
       valid_until: value.toISOString(),
